@@ -78,10 +78,10 @@ bot.command('start', async (ctx) => {
 
   // Adding a reply button to the welcome message
   await bot.telegram.sendPhoto(ctx.chat.id, imageUrl, {
-    caption: `Hi ${first_name}, the launch of Liquidity Lambs NFT collection is almost upon us. You can now claim your whitelist spot by clicking the button below, limited spots available!`,
+    caption: `Hey ${first_name}, the launch of Liquidity Lambs NFT collection is almost upon us. Click the button below to Claim your spot on the woolylist. Unlock exclusive perks, rewards, and a chance to be part of something revolutionary. Limited spots for early adopters!`,
     reply_markup: {
       inline_keyboard: [
-        [{ text: 'Get Whitelist 🎁', callback_data: 'get_whitelist' }]
+        [{ text: 'Join Woolylist 🎁', callback_data: 'get_whitelist' }]
       ]
     }
   });
@@ -97,8 +97,6 @@ const sendCaptchaMessage = async (ctx) => {
       inline_keyboard: [emojis.map(emoji => emoji)]
     }
   });
-
-  // Update user state to indicate they are solving the CAPTCHA
   userStates[id] = 'captcha';
 };
 
@@ -106,10 +104,10 @@ const sendCaptchaMessage = async (ctx) => {
 const sendGetWhitelistMessage = async (ctx) => {
   const { id, first_name } = ctx.from;
 
-  const text = `Join the WoolySwap community and collect our 333 unique NFT sheeps, each representing the spirit of our community. Unlock exclusive benefits and rewards as you gather your flock!`;
+  const text = `Join the WoolySwap community and Become a Wooly Shepherd! collect our 999 unique NFT sheep, each representing the spirit of our community. Unlock exclusive benefits as you gather your flock!`;
   const buttons = [
     { text: 'Learn More', url: 'https://woolyswap.com' },
-    { text: 'Claim Whitelist 🎁', callback_data: 'get_whitelist_clicked' }
+    { text: 'Join Woolylist 🎁', callback_data: 'get_whitelist_clicked' }
   ];
 
   const imageUrl1 = "https://i.ibb.co/3dYRFKj/679737f6-5f56-4122-848f-9cdeeca2f900.jpg";
@@ -155,7 +153,7 @@ bot.on('callback_query', async (ctx) => {
     'get_whitelist_clicked': {
       text: `STEP 1: Follow us on Twitter.\n\nPlease follow WoolySwap on Twitter and click the button below to continue: https://twitter.com/WoolySwap`,
       buttons: [
-        { text: 'Follow Twitter', url: 'https://twitter.com/WoolySwap' },
+        { text: 'Follow Twitter 🐦', url: 'https://twitter.com/WoolySwap' },
         { text: 'Done Task ✅', callback_data: 'follow_twitter_clicked' }
       ],
       nextState: 'follow_twitter_clicked'
@@ -163,21 +161,21 @@ bot.on('callback_query', async (ctx) => {
     'follow_twitter_clicked': {
       text: `STEP 2: Engage with our pinned tweet! Like, repost, and comment.\n\nVisit our Twitter page here: https://twitter.com/WoolySwap`,
       buttons: [
-        { text: 'Open Twitter', url: 'https://twitter.com/WoolySwap' },
+        { text: 'Open Twitter 🐦', url: 'https://twitter.com/WoolySwap' },
         { text: 'Done Task ✅', callback_data: 'send_tweet_clicked' }
       ],
       nextState: 'send_tweet_clicked'
     },
     'send_tweet_clicked': {
-      text: `STEP 3: Send out a Tweet to gather the flock!\n\nSave the images above and click button below to tweet, add images to your tweet!:\n\n`,
+      text: `STEP 3: Spread the Word and Flock Together! 🐑\n\nSave the images above, click button below to tweet (feel free to use our suggested text!), add images to your tweet!:\n\n`,
       buttons: [
-        { text: 'Tweet Now', url: 'https://twitter.com/intent/tweet?text=Claim%20your%20Whitelist%20spot%20for%20the%20Liquidity%20Lambs%20NFTs.%20Whitelisting%20campaign%20to%20giveaway%20WL%20spots%20is%20ongoing!%20Don%27t%20miss.%20@WoolySwapNFT%20%23LiquidityLambs%20%23NFT%20%23WoolySwap' },
+        { text: 'Tweet Now 🐦', url: 'https://twitter.com/intent/tweet?text=Claim%20your%20Whitelist%20spot%20for%20the%20Liquidity%20Lambs%20NFTs.%20Whitelisting%20campaign%20to%20giveaway%20WL%20spots%20is%20ongoing!%20Don%27t%20miss.%20@WoolySwapNFT%20%23LiquidityLambs%20%23NFT%20%23WoolySwap' },
         { text: 'Done Task ✅', callback_data: 'engage_twitter_clicked' }
       ],
       nextState: 'engage_twitter_clicked'
     },
     'engage_twitter_clicked': {
-      text: `STEP 3: Join our Telegram Community\n\nFollow the link below to join the flock\n\n🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑`,
+      text: `STEP 3: Join the Flock & Chat with Fellow Shepherds!\n\nFollow the link below to join the flock\n\n🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑`,
       buttons: [
         { text: 'Join Telegram', url: 'https://t.me/WoolySwap_Flock' },
         { text: 'Subscribe Channel', url: 'https://t.me/WoolySwap_Flock' },
@@ -195,9 +193,7 @@ bot.on('callback_query', async (ctx) => {
   };
 
   if (callbackData in steps) {
-    // Update user state
     userStates[id] = steps[callbackData].nextState;
-    // Delete the previous message
     await ctx.deleteMessage(messageId);
     // Send the current step message
     const step = steps[callbackData];
@@ -228,7 +224,7 @@ const walletAddressHandler = async (ctx) => {
   const loggedData = new LoggedData({ userId: id, username, walletAddress });
   await loggedData.save();
   console.log('Logged:', { userId: id, username, walletAddress });
-  await bot.telegram.sendMessage(ctx.chat.id, `🎉 Thank you for submitting your wallet address!\n\nWallet Address: ${walletAddress}\n\nOur team will verify the completion of tasks and award whitelist spots. Stay tuned for further updates! 🐑✨`);
+  await bot.telegram.sendMessage(ctx.chat.id, `🎉 Thank you for submitting your wallet address!\n\nWallet Address: ${walletAddress}\n\nOur team will verify the completion of tasks and award woolylist winners. Stay tuned for further updates! 🐑✨`);
   delete userStates[id];
 };
 
