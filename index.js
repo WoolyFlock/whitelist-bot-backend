@@ -1,7 +1,5 @@
 const express = require('express');
 const expressApp = express();
-const axios = require("axios");
-const path = require("path");
 const port = process.env.PORT || 3000;
 expressApp.use(express.static('static'));
 expressApp.use(express.json());
@@ -78,7 +76,7 @@ bot.command('start', async (ctx) => {
 
   // Adding a reply button to the welcome message
   await bot.telegram.sendPhoto(ctx.chat.id, imageUrl, {
-    caption: `Hey ${first_name}, the launch of Liquidity Lambs NFT collection is almost upon us. Click the button below to Claim your spot on the woolylist. Unlock exclusive perks, rewards, and a chance to be part of something revolutionary. Limited spots for early adopters!`,
+    caption: `Hey ${first_name}, the launch of Liquidity Lambs NFT collection is almost upon us. Click the button below to Claim your spot on the woolylist.\n\nUnlock exclusive perks, rewards, and a chance to be part of something revolutionary. Limited spots for early adopters!`,
     reply_markup: {
       inline_keyboard: [
         [{ text: 'Join Woolylist 🎁', callback_data: 'get_whitelist' }]
@@ -167,9 +165,9 @@ bot.on('callback_query', async (ctx) => {
       nextState: 'send_tweet_clicked'
     },
     'send_tweet_clicked': {
-      text: `STEP 3: Spread the Word and Flock Together! 🐑\n\nSave the images above, click button below to tweet (feel free to use our suggested text!), add images to your tweet!:\n\n`,
+      text: `STEP 3: Spread the Word and Flock Together! 🐑\n\nSave NFT images above, click button below to tweet (feel free to use our suggested text!), add saved images to your tweet!:\n\n`,
       buttons: [
-        { text: 'Tweet Now 🐦', url: 'https://twitter.com/intent/tweet?text=Claim%20your%20Whitelist%20spot%20for%20the%20Liquidity%20Lambs%20NFTs.%20Whitelisting%20campaign%20to%20giveaway%20WL%20spots%20is%20ongoing!%20Don%27t%20miss.%20@WoolySwapNFT%20%23LiquidityLambs%20%23NFT%20%23WoolySwap' },
+        { text: 'Tweet Now 🐦', url: 'https://twitter.com/intent/tweet?text=%F0%9F%9A%A8%20Attention%20%24TON%20fam!%20%F0%9F%90%91%0A%0AThe%20Liquidity%20Lambs%20are%20flocking%20to%20the%20blockchain%2C%20and%20your%20golden%20ticket%20awaits!%20%F0%9F%8E%9F%EF%B8%8F%0A%0A%F0%9F%94%A5%20Claim%20your%20Woolylist%20spot%20NOW%20for%20%40WoolySwap%20hottest%20drop!%0A%0A%E2%8F%B3%20Limited%20spots%20available%0A%F0%9F%94%91%20Early%20access%0A%F0%9F%8E%81%20Exclusive%20perks%0A%0A%F0%9F%94%97%20t.me%2FWoolyRanch_bot%0A%0A%23LiquidityLambs%20%23NFT%20%23WoolySwap' },
         { text: 'Done Task ✅', callback_data: 'engage_twitter_clicked' }
       ],
       nextState: 'engage_twitter_clicked'
