@@ -102,9 +102,9 @@ const sendCaptchaMessage = async (ctx) => {
 const sendGetWhitelistMessage = async (ctx) => {
   const { id, first_name } = ctx.from;
 
-  const text = `Join the WoolySwap community and Become a Wooly Shepherd!\n\nCollect our 999 unique NFT sheep, each representing the spirit of our community. Unlock exclusive benefits as you gather your flock!`;
+  const text = `Join the WoolySwap community and Become a Wooly Shepherd!\n\nCollect our 555 unique NFT sheeps, each representing the spirit of our community. Unlock exclusive benefits as you gather your flock!`;
   const buttons = [
-    { text: 'Learn More', url: 'https://woolyswap.com' },
+    { text: 'Learn More', url: 'https://medium.com/@WoolySwap/whitelisting-for-woolyswap-nft-collection-become-a-wooly-shepherd-ecf392c2a5e7' },
     { text: 'Join Woolylist 🎁', callback_data: 'get_whitelist_clicked' }
   ];
 
