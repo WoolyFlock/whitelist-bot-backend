@@ -76,7 +76,7 @@ bot.command('start', async (ctx) => {
 
   // Adding a reply button to the welcome message
   await bot.telegram.sendPhoto(ctx.chat.id, imageUrl, {
-    caption: `Hey ${first_name}, the launch of Liquidity Lambs NFT collection is almost upon us. Click the button below to Claim your spot on the woolylist.\n\nUnlock exclusive perks, rewards, and a chance to be part of something revolutionary. Limited spots for early adopters!`,
+    caption: `Hey ${first_name}, the launch of Liquidity Lambs NFT collection is almost upon us. Click the button below to Claim your spot on the woolylist.\n\nUnlock exclusive perks, rewards, and a chance to be part of something revolutionary. Limited spots for early sheeps!`,
     reply_markup: {
       inline_keyboard: [
         [{ text: 'Join Woolylist 🎁', callback_data: 'get_whitelist' }]
@@ -109,7 +109,7 @@ const sendGetWhitelistMessage = async (ctx) => {
   ];
 
   const imageUrl1 = "https://i.ibb.co/3dYRFKj/679737f6-5f56-4122-848f-9cdeeca2f900.jpg";
-  const imageUrl2 = "https://i.ibb.co/j4qLv59/b0f6281f-55c0-4847-8309-1f3882ae1d80.jpg";
+  const imageUrl2 = "https://i.ibb.co/Ych4LVq/12.png";
 
   await bot.telegram.sendPhoto(ctx.chat.id, imageUrl1);
   await bot.telegram.sendPhoto(ctx.chat.id, imageUrl2);
