@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const expressApp = express();
 const port = process.env.PORT || 3000;
 expressApp.use(express.static('static'));
@@ -18,6 +19,8 @@ const getRandomEmojis = () => {
 };
 let loggedData = [];
 let userStates = {};
+
+expressApp.use(cors()); 
 
 // Connect to MongoDB
 connectDB().then(() => {
