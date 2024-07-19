@@ -14,13 +14,13 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 const getRandomEmojis = () => {
   const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🐌', '🐞', '🐜', '🦋', '🐢', '🐍', '🦎', '🦂', '🐢', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🐊', '🐅', '🐆', '🦓', '🦍', '🐘', '🦏', '🦒', '🐃', '🐂', '🐄', '🐎', '🐖', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🦉', '🦇', '🐺', '🐲', '🐉', '🦕', '🦖', '🐾', '🐉', '🦖', '🦕'];
   let selectedEmojis = emojis.sort(() => 0.5 - Math.random()).slice(0, 5);
-  selectedEmojis.push('🐑'); 
+  selectedEmojis.push('🐑');
   return selectedEmojis.sort(() => 0.5 - Math.random());
 };
 let loggedData = [];
 let userStates = {};
 
-expressApp.use(cors()); 
+expressApp.use(cors());
 
 // Connect to MongoDB
 connectDB().then(() => {
@@ -34,8 +34,8 @@ expressApp.post('/log-wallet-address', async (req, res) => {
   const { userId, username, walletAddress } = req.body;
   console.log(`Received wallet address: userId=${userId}, username=${username}, walletAddress=${walletAddress}`);
 
-   // Save to MongoDB
-   try {
+  // Save to MongoDB
+  try {
     const loggedData = new LoggedData({ userId, username, walletAddress });
     await loggedData.save();
     res.sendStatus(200);
@@ -59,177 +59,52 @@ expressApp.get('/logged-data', async (req, res) => {
   }
 });
 
+/// send message to all users
+expressApp.post('/send-message', async (req, res) => {
+  const message = "Hey Wooly Shepherd, our Liquidity Lambs NFT collection is set to launch in less than 10 hours! You can now check your eligibility for the whitelist. Simply connect your wallet to verify your eligibility and get ready to mint! 🐑 🐑 🐑";
+  const imageUrl = "https://i.ibb.co/T1DpkhR/IMG-0211.png";
+  const mintButtonText = "Mint NFT 💎";
+  const mintButtonUrl = "https://nft.woolyswap.com";
+  const tweetButtonText = "Like, Comment + Repost 💬";
+  const tweetButtonUrl = "https://x.com/woolyswap/status/1814324145951314168?s=46";
+  const shareButtonText = "Share with Friends 👫";
+  const shareButtonUrl = "https://telegram.me/share/url?url=https://t.me/WoolyRanch_bot";
 
-
-
-bot.command('start', async (ctx) => {
-  const { id, first_name } = ctx.from;
-  console.log(ctx.from);
-  // Check if the user's wallet address is already saved
-  const userExists = loggedData.some((entry) => entry.userId === id);
-  if (userExists) {
-    await bot.telegram.sendMessage(ctx.chat.id, 'Your wallet address is already saved. Thank you!');
-    return;
-  }
-
-  const imageUrl = "https://i.ibb.co/CsYyZ6d/wooly-liquidity-lambs.jpg";
-  
-  // Initialize user state
-  userStates[id] = 'start';
-
-  // Adding a reply button to the welcome message
-  await bot.telegram.sendPhoto(ctx.chat.id, imageUrl, {
-    caption: `Hey ${first_name}, the launch of Liquidity Lambs NFT collection is almost upon us. Click the button below to Claim your spot on the woolylist.\n\nUnlock exclusive perks, rewards, and a chance to be part of something revolutionary. Limited spots for early sheeps!`,
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: 'Join Woolylist 🎁', callback_data: 'get_whitelist' }]
-      ]
-    }
-  });
-});
-
-// Function to send CAPTCHA message
-const sendCaptchaMessage = async (ctx) => {
-  const { id } = ctx.from;
-  const emojis = getRandomEmojis().map(emoji => ({ text: emoji, callback_data: `captcha_${emoji}` }));
-
-  await bot.telegram.sendMessage(ctx.chat.id, `Please select the sheep emoji "🐑" to verify you are not a bot:`, {
-    reply_markup: {
-      inline_keyboard: [emojis.map(emoji => emoji)]
-    }
-  });
-  userStates[id] = 'captcha';
-};
-
-// Function to send 'get_whitelist' message
-const sendGetWhitelistMessage = async (ctx) => {
-  const { id, first_name } = ctx.from;
-
-  const text = `Join the WoolySwap community and Become a Wooly Shepherd!\n\nCollect our 555 unique NFT sheeps, each representing the spirit of our community. Unlock exclusive benefits as you gather your flock!`;
-  const buttons = [
-    { text: 'Learn More', url: 'https://medium.com/@WoolySwap/whitelisting-for-woolyswap-nft-collection-become-a-wooly-shepherd-ecf392c2a5e7' },
-    { text: 'Join Woolylist 🎁', callback_data: 'get_whitelist_clicked' }
-  ];
-
-  const imageUrl1 = "https://i.ibb.co/3dYRFKj/679737f6-5f56-4122-848f-9cdeeca2f900.jpg";
-  const imageUrl2 = "https://i.ibb.co/Ych4LVq/12.png";
-
-  await bot.telegram.sendPhoto(ctx.chat.id, imageUrl1);
-  await bot.telegram.sendPhoto(ctx.chat.id, imageUrl2);
-
-  await bot.telegram.sendMessage(ctx.chat.id, text, {
-    reply_markup: {
-      inline_keyboard: [buttons]
-    }
-  });
-
-  // Update user state
-  userStates[id] = 'get_whitelist_clicked';
-};
-
-bot.on('callback_query', async (ctx) => {
-  const callbackData = ctx.callbackQuery.data;
-  const messageId = ctx.callbackQuery.message.message_id;
-  const { id } = ctx.from;
-
-  if (callbackData.startsWith('captcha_')) {
-    const selectedEmoji = callbackData.split('_')[1];
-    if (selectedEmoji === '🐑') {
-      // If the user selects the sheep emoji
-      await bot.telegram.sendMessage(ctx.chat.id, "CAPTCHA passed! Proceeding to the next step...");
-      await sendGetWhitelistMessage(ctx);
-    } else {
-      // If the user selects the wrong emoji
-      await bot.telegram.sendMessage(ctx.chat.id, "Incorrect! Please try again.");
-      await sendCaptchaMessage(ctx);
-    }
-    return;
-  }
-
-    if (callbackData === 'get_whitelist') {
-      await sendCaptchaMessage(ctx);
-    }
-
-  const steps = {
-    'get_whitelist_clicked': {
-      text: `STEP 1: Follow us on Twitter.\n\nPlease follow WoolySwap on Twitter and click the button below to continue: https://twitter.com/WoolySwap`,
-      buttons: [
-        { text: 'Follow Twitter 🐦', url: 'https://twitter.com/WoolySwap' },
-        { text: 'Done Task ✅', callback_data: 'follow_twitter_clicked' }
-      ],
-      nextState: 'follow_twitter_clicked'
-    },
-    'follow_twitter_clicked': {
-      text: `STEP 2: Engage with our pinned tweet! Like, repost, and comment.\n\nVisit our Twitter page here: https://twitter.com/WoolySwap`,
-      buttons: [
-        { text: 'Open Twitter 🐦', url: 'https://twitter.com/WoolySwap' },
-        { text: 'Done Task ✅', callback_data: 'send_tweet_clicked' }
-      ],
-      nextState: 'send_tweet_clicked'
-    },
-    'send_tweet_clicked': {
-      text: `STEP 3: Spread the Word and Flock Together! 🐑\n\nSave NFT images above, click button below to tweet (feel free to use our suggested text!), add saved images to your tweet!:\n\n`,
-      buttons: [
-        { text: 'Tweet Now 🐦', url: 'https://twitter.com/intent/tweet?text=%F0%9F%9A%A8%20Attention%20%24TON%20fam!%20%F0%9F%90%91%0A%0AThe%20Liquidity%20Lambs%20are%20flocking%20to%20the%20blockchain%2C%20and%20your%20golden%20ticket%20awaits!%20%F0%9F%8E%9F%EF%B8%8F%0A%0A%F0%9F%94%A5%20Claim%20your%20Woolylist%20spot%20NOW%20for%20%40WoolySwap%20hottest%20drop!%0A%0A%E2%8F%B3%20Limited%20spots%20available%0A%F0%9F%94%91%20Early%20access%0A%F0%9F%8E%81%20Exclusive%20perks%0A%0A%F0%9F%94%97%20t.me%2FWoolyRanch_bot%0A%0A%23LiquidityLambs%20%23NFT%20%23WoolySwap' },
-        { text: 'Done Task ✅', callback_data: 'engage_twitter_clicked' }
-      ],
-      nextState: 'engage_twitter_clicked'
-    },
-    'engage_twitter_clicked': {
-      text: `STEP 3: Join the Flock & Chat with Fellow Shepherds!\n\nFollow the link below to join the flock\n\n🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑🐑`,
-      buttons: [
-        { text: 'Join Telegram', url: 'https://t.me/WoolySwap_Flock' },
-        { text: 'Subscribe Channel', url: 'https://t.me/Woolyswap' },
-        { text: 'Done Task ✅', callback_data: 'send_telegram_clicked' }
-      ],
-      nextState: 'send_telegram_clicked'
-    },
-    'send_telegram_clicked': {
-      text: 'STEP 4: Submit your TON wallet address below:',
-      buttons: [
-        { text: 'Need Help?', url: 'https://ton.org/wallets?pagination%5Blimit%5D=-1' }
-      ],
-      nextState: 'submit_wallet'
-    },
-  };
-
-  if (callbackData in steps) {
-    userStates[id] = steps[callbackData].nextState;
-    await ctx.deleteMessage(messageId);
-    // Send the current step message
-    const step = steps[callbackData];
-    await bot.telegram.sendMessage(ctx.chat.id, step.text, {
-      reply_markup: {
-        inline_keyboard: step.buttons.map(button => [button])
+  try {
+    const users = await LoggedData.find();
+    for (const user of users) {
+      try {
+        await bot.telegram.sendPhoto(user.userId, imageUrl, {
+          caption: message,
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: mintButtonText, url: mintButtonUrl }],
+              [{ text: tweetButtonText, url: tweetButtonUrl }],
+              [{ text: shareButtonText, url: shareButtonUrl }]
+            ]
+          }
+        });
+      } catch (err) {
+        if (err.response && err.response.error_code === 403) {
+          console.error(`Failed to send message to user ${user.userId}: ${err.description}`);
+        } else {
+          throw err;
+        }
       }
-    });
+    }
+    res.sendStatus(200);
+  } catch (err) {
+    console.error('Failed to send message to all users', err);
+    res.sendStatus(500);
   }
 });
 
-//handler for the wallet address submission
-const walletAddressHandler = async (ctx) => {
-  const { id, username } = ctx.from;
-  // Check if the user's wallet address is already saved in database
-  const userExists = await LoggedData.exists({ userId: id });
-  if (userExists) {
-    await bot.telegram.sendMessage(ctx.chat.id, `Your wallet address is already saved. Thank you! 🐑✨`);
-    return;
-  }
-  // Check if user has reached Step 4
-  if (userStates[id] !== 'submit_wallet') {
-    await bot.telegram.sendMessage(ctx.chat.id, `Click a button on the text to continue...`);
-    return;
-  }
-  const walletAddress = ctx.message.text;
-  // Log wallet address to mongoDB
-  const loggedData = new LoggedData({ userId: id, username, walletAddress });
-  await loggedData.save();
-  console.log('Logged:', { userId: id, username, walletAddress });
-  await bot.telegram.sendMessage(ctx.chat.id, `🎉 Thank you for submitting your wallet address!\n\nWallet Address: ${walletAddress}\n\nOur team will verify the completion of tasks and award woolylist winners. Stay tuned for further updates! 🐑✨`);
-  delete userStates[id];
-};
+// curl -X POST http://localhost:3000/send-message -H "Content-Type: application/json"
+
+
+
 
 // Add the listener for text messages
-bot.on('text', walletAddressHandler);
+bot.on();
 
 bot.launch();
