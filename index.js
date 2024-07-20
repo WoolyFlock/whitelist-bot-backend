@@ -62,14 +62,14 @@ expressApp.get('/logged-data', async (req, res) => {
 /// send message to all users
 expressApp.post('/send-message', async (req, res) => {
   const message = "🔥 MINTING IS NOW LIVE! 🔥\n\n" +
-  "WL mint is now open exclusively for whitelisted wallets! Join the growth of WoolySwap by minting a Liquidity Lamb NFT! These unique NFTs provide you with an opportunity to become part of our community of early adopters while unlocking a TON of utilities.\n\n";
+  "mint is now open exclusively for whitelisted wallets! Join the growth of WoolySwap by minting a Liquidity Lamb NFT! These unique NFTs provide you with an opportunity to become part of our community of early adopters while unlocking a TON of utilities.\n\n";
    const imageUrl = "https://i.ibb.co/6s9J01z/IMG-0617.png";
   const mintButtonText = "Mint Now 💎";
   const mintButtonUrl = "https://nft.woolyswap.com";
   const tweetButtonText = "Like, Comment + Repost 💬";
   const tweetButtonUrl = "https://x.com/woolyswap/status/1814607689260904517?s=46";
   const shareButtonText = "Share with Friends 🐑";
-  const shareButtonUrl = "https://nft.woolyswap.com";
+  const shareButtonUrl = "https://t.me/share/url?url=https://nft.woolyswap.com";
 
   try {
     const users = await LoggedData.find();
